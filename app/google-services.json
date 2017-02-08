@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "233635604319",
+    "firebase_url": "https://apumanque-9a680.firebaseio.com",
+    "project_id": "apumanque-9a680",
+    "storage_bucket": "apumanque-9a680.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233635604319:android:b592ef2b2edc0beb",
+        "android_client_info": {
+          "package_name": "com.rinno.apumanque"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "233635604319-7ki6ud6lg9o1hdprju99hsu8gsbel5cl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0RHX712COtjAXzSYxddHwXf9oS8_Nuuw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "233635604319-7ki6ud6lg9o1hdprju99hsu8gsbel5cl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "233635604319-2krh1ro29flkp7b1dqtkgpk2biii5643.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.epigames.Apumanque"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
