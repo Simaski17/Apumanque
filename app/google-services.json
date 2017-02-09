@@ -29,20 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "233635604319-7ki6ud6lg9o1hdprju99hsu8gsbel5cl.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "233635604319-2krh1ro29flkp7b1dqtkgpk2biii5643.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.epigames.Apumanque"
-              }
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
