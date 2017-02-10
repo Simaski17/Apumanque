@@ -6,41 +6,41 @@ package com.rinno.apumanque.models;
 
 public class Edges {
 
-    private int cost;
-    private String end;
-    private String source;
+    private int costo;
+    private String inicio;
+    private String fin;
 
     public  Edges(){
 
     }
 
-    public Edges(int cost, String end, String source){
-        this.cost = cost;
-        this.end = end;
-        this.source = source;
+    public Edges(String inicio, String fin, int costo){
+        this.inicio = inicio;
+        this.fin = fin;
+        this.costo = costo;
     }
 
-    public int getCost() {
-        return cost;
+    public int getCosto() {
+        return costo;
     }
 
-    public void setCost(int cost) {
-        this.cost = cost;
+    public void setCosto(int costo) {
+        this.costo = costo;
     }
 
-    public String getEnd() {
-        return end;
+    public String getInicio() {
+        return inicio;
     }
 
-    public void setEnd(String end) {
-        this.end = end;
+    public void setInicio(String inicio) {
+        this.inicio = inicio;
     }
 
-    public String getSource() {
-        return source;
+    public String getFin() {
+        return fin;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setFin(String fin) {
+        this.fin = fin;
     }
 }

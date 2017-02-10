@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.rinno.apumanque.algoritmo.Astar;
 import com.rinno.apumanque.algoritmo.Graph;
 import com.rinno.apumanque.models.Edges;
 import com.rinno.apumanque.models.Nodes;
@@ -23,8 +24,15 @@ public class MainActivity extends AppCompatActivity {
     //Listas donde manejamos la adicion de los vertices y edges del grafo
     public List<Graph.Vertex<String>> vertices = new ArrayList<Graph.Vertex<String>>();
     public List<Graph.Edge<String>> edges = new ArrayList<Graph.Edge<String>>();
+    ArrayList arregloA = new ArrayList();
+    ArrayList arregloB = new ArrayList();
+    ArrayList arregloCosto = new ArrayList();
 
     Button btPrueba;
+    boolean bandera = false;
+    boolean bandera2 = false;
+    int j;
+    int k;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,25 +47,46 @@ public class MainActivity extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e("TAG","VALOR: "+dataSnapshot.child("nodes").getChildrenCount());
+                //Log.e("TAG","VALOR: "+dataSnapshot.child("Nodes").getChildrenCount());
 
-                for(int i = 1; i < dataSnapshot.child("nodes").getChildrenCount(); i++) {
+                for(int i = 1; i <= dataSnapshot.child("Nodes").getChildrenCount(); i++) {
 
-                    Nodes nod = dataSnapshot.child("nodes").child(String.valueOf(i)).getValue(Nodes.class);
-                    Graph.Vertex<String> a = new Graph.Vertex<String>(nod.getId());
+                    Nodes nod = dataSnapshot.child("Nodes").child(String.valueOf(i)).getValue(Nodes.class);
+                    Graph.Vertex<String> a = new Graph.Vertex<String>(nod.getId().trim());
+                    //Log.e("TAG","VALOR A: "+nod.getId().getClass().toString());
                     vertices.add(a);
+                   //Log.e("TAG","VALOR A: "+a);
 
                 }
+                //Log.e("TAG","VALOR ed: "+vertices);
 
-                for(int i = 1; i < dataSnapshot.child("Edges").getChildrenCount(); i++) {
+                for(int i = 1; i <= dataSnapshot.child("Edges").getChildrenCount(); i++) {
 
                     Edges edg = dataSnapshot.child("Edges").child(String.valueOf(i)).getValue(Edges.class);
-                    Graph.Vertex<String> a = new Graph.Vertex<String>(edg.getSource());
-                    Graph.Vertex<String> b = new Graph.Vertex<String>(edg.getEnd());
-                    Graph.Edge<String> ed = new Graph.Edge<String>(edg.getCost(),  a, b);
-                    edges.add(ed);
+                    Graph.Vertex<String> a = new Graph.Vertex<String>(edg.getInicio().trim());
+                    Graph.Vertex<String> b = new Graph.Vertex<String>(edg.getFin().trim());
 
+                    for (int l = 0; l < vertices.size(); l++){
+                        if(vertices.get(l).equals(a)){
+                            //Log.e("TAG","ENCONTRADO A: "+vertices.get(l)+ i + "---> " +l);
+                            arregloA.add(l);
+                        }
+                    }
+
+                    for (int l = 0; l < vertices.size(); l++){
+                        if(vertices.get(l).equals(b)){
+                            //Log.e("TAG","ENCONTRADO B: "+vertices.get(l)+ i);
+                            arregloB.add(l);
+                        }
+                    }
+                    arregloCosto.add(edg.getCosto());
+                    //Log.e("TAG","arregloA: "+arregloA);
+                    //Log.e("TAG","arregloB: "+arregloB);
+                    //Log.e("TAG","arregloCosto: "+arregloCosto);
+                    //Graph.Edge<String> ed = new Graph.Edge<String>(edg.getCosto(),a,b);
+                    //edges.add(ed);
                 }
+                //Log.e("TAG","Vertices: "+vertices);
 
 
 
@@ -123,53 +152,23 @@ public class MainActivity extends AppCompatActivity {
         btPrueba.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                for (int i = 0; i < arregloA.size(); i++){
+                    Graph.Edge<String> ed = new Graph.Edge<String>((int) arregloCosto.get(i),  vertices.get((int) arregloA.get(i)), vertices.get((int) arregloB.get(i)));
+                    edges.add(ed);
+                }
+
                 Graph<String> graph = new Graph<String>(Graph.TYPE.UNDIRECTED, vertices, edges);
-                Log.e("TAG","VERTICES: "+graph);
+                Astar astar=new Astar();
+        //astar.aStar(graph,   a, d);
+        Log.e("TAG","RUTA: "+astar.aStar(graph, vertices.get(0), vertices.get(4)));
+
+
+                //Log.e("TAG","GRAFO: "+graph);
+                //Log.e("TAG","VERTICES: "+vertices);
+                //Log.e("TAG","VERTICES: "+edges);
             }
         });
-
-
-//        List<Graph.Vertex<String>> vertices = new ArrayList<Graph.Vertex<String>>();
-//        List<Graph.Edge<String>> edges = new ArrayList<Graph.Edge<String>>();
-//        Graph.Vertex<String> a = new Graph.Vertex<String>("a");
-//        Graph.Vertex<String> b = new Graph.Vertex<String>("b");
-//        Graph.Vertex<String> c = new Graph.Vertex<String>("c");
-//        Graph.Vertex<String> d = new Graph.Vertex<String>("d");
-//        Graph.Vertex<String> e = new Graph.Vertex<String>("e");
-//        Graph.Vertex<String> f = new Graph.Vertex<String>("f");
-//        vertices.add(a);
-//        vertices.add(b);
-//        vertices.add(c);
-//        vertices.add(d);
-//        vertices.add(e);
-//        vertices.add(f);
-//
-//        Graph.Edge<String> ea_b = new Graph.Edge<String>(3, a, b);
-//        Graph.Edge<String> eb_c = new Graph.Edge<String>(3, b, c);
-//        Graph.Edge<String> ea_c = new Graph.Edge<String>(5, a, c);
-//        Graph.Edge<String> eb_d = new Graph.Edge<String>(4, b, d);
-//        Graph.Edge<String> eb_e = new Graph.Edge<String>(7, b, e);
-//        Graph.Edge<String> ec_d = new Graph.Edge<String>(2, c, d);
-//        Graph.Edge<String> ed_e = new Graph.Edge<String>(2, d, e);
-//        Graph.Edge<String> ed_f = new Graph.Edge<String>(2, d, f);
-//        Graph.Edge<String> ee_f = new Graph.Edge<String>(5, e, f);
-//        edges.add(ea_b);
-//        edges.add(eb_c);
-//        edges.add(eb_e);
-//        edges.add(ea_c);
-//        edges.add(eb_d);
-//        edges.add(ed_e);
-//        edges.add(ec_d);
-//        edges.add(ed_e);
-//        edges.add(ed_f);
-//        edges.add(ee_f);
-//        Graph<String> graph = new Graph<String>(Graph.TYPE.UNDIRECTED, vertices, edges);
-//
-//
-//         Astar astar=new Astar();
-//        astar.aStar(graph,   a, d);
-//        Log.e("TAG","RUTA: "+astar.aStar(graph, a, f));
-
 
    }
 }

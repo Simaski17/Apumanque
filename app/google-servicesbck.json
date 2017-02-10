@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "743745200302",
-    "firebase_url": "https://pruebaapumanque.firebaseio.com",
-    "project_id": "pruebaapumanque",
-    "storage_bucket": "pruebaapumanque.appspot.com"
+    "project_number": "233635604319",
+    "firebase_url": "https://apumanque-9a680.firebaseio.com",
+    "project_id": "apumanque-9a680",
+    "storage_bucket": "apumanque-9a680.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:743745200302:android:b592ef2b2edc0beb",
+        "mobilesdk_app_id": "1:233635604319:android:b592ef2b2edc0beb",
         "android_client_info": {
           "package_name": "com.rinno.apumanque"
         }
       },
       "oauth_client": [
         {
-          "client_id": "743745200302-4mq09hbq9a1ccb3fkcgrdq97240rmmk4.apps.googleusercontent.com",
+          "client_id": "233635604319-7ki6ud6lg9o1hdprju99hsu8gsbel5cl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBD85fekAA6yzmsFXKSRwwXh8naD19Y_sM"
+          "current_key": "AIzaSyD0RHX712COtjAXzSYxddHwXf9oS8_Nuuw"
         }
       ],
       "services": {
