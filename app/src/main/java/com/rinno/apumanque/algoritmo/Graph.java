@@ -427,8 +427,9 @@ public class Graph<T extends Comparable<T>> {
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append("[ ").append(from.value).append("(").append(from.weight).append(") ").append("]").append(" -> ")
-                    .append("[ ").append(to.value).append("(").append(to.weight).append(") ").append("]").append(" = ").append(cost).append("\n");
+//            builder.append("[ ").append(from.value).append("(").append(from.weight).append(") ").append("]").append(" -> ")
+//                    .append("[ ").append(to.value).append("(").append(to.weight).append(") ").append("]").append(" = ").append(cost).append("\n");
+            builder.append(from.value).append(",").append(to.value);
             return builder.toString();
         }
     }
