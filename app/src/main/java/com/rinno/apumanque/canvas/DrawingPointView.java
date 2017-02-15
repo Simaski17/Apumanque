@@ -7,15 +7,16 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PathEffect;
 import android.graphics.PathMeasure;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.rinno.apumanque.models.Nodes;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by simaski on 31-01-17.
@@ -24,12 +25,12 @@ import java.util.ArrayList;
 public class DrawingPointView extends View {
     Path path;
     Paint paint;
-    Paint paint3;
+    Paint paint2;
     float length;
 
-    public String[] parts;
     public ArrayList<Float> coordx = new ArrayList<Float>();
     public ArrayList<Float> coordy = new ArrayList<Float>();
+    final AnimatorSet mAnimationSet = new AnimatorSet();
 
     public DrawingPointView(Context context)
     {
@@ -47,34 +48,21 @@ public class DrawingPointView extends View {
     }
 
 
-    public void init(String partes)
+    public void init(List<Nodes> puntos)
     {
 
-        class Puntos{
-            float x, y, z;
-            Puntos(float _x, float _y, float _z){
-                x = _x;
-                y = _y;
-                z = _z;
-            }
-        }
+        coordx = new ArrayList<>();
+        coordy = new ArrayList<>();
 
-        Puntos[] myPath = { new Puntos(540, 100, 0), new Puntos(440, 200, 0), new Puntos(500, 300, 0), new Puntos(300, 400, 0), new Puntos(470, 450, 0), new Puntos(550, 450, 0),
-                new Puntos(380, 500, 0), new Puntos(500, 530, 1),new Puntos(750, 550, 0),new Puntos(200, 650, 0),new Puntos(480, 680, 0),new Puntos(540, 650, 0),new Puntos(650, 650, 0),new Puntos(850, 680, 0),
-                new Puntos(250, 720, 0),new Puntos(400, 700, 1),new Puntos(540, 720, 0),new Puntos(150, 830, 0),new Puntos(360, 800, 0),new Puntos(600, 870, 0),new Puntos(900, 800, 0),
-                new Puntos(50, 930, 0),new Puntos(360, 980, 0),new Puntos(480, 950, 0), new Puntos(750, 940, 0),new Puntos(650, 1100, 0)};
-
-        parts =partes.split("->"); // escape .
-
-        paint3 = new Paint();
-        paint3.setColor(Color.MAGENTA);
+        paint2 = new Paint();
+        paint2.setColor(Color.MAGENTA);
 
         path = new Path();
 
-        for(int i =0; i < parts.length; i++){
 
-            coordx.add(myPath[Integer.parseInt(parts[i])].x);
-            coordy.add(myPath[Integer.parseInt(parts[i])].y);
+        for(int i =0; i < puntos.size(); i++){
+            coordx.add((float) puntos.get(i).getLocationX());
+            coordy.add((float) puntos.get(i).getLocationY());
         }
 
         path.moveTo(coordx.get(0), coordy.get(0));
@@ -85,13 +73,13 @@ public class DrawingPointView extends View {
         float[] intervals = new float[]{length, length};
 
 
+
         ObjectAnimator fadeOut = ObjectAnimator.ofFloat(this, "alpha",  1f, .3f);
-        fadeOut.setDuration(500);
+        fadeOut.setDuration(600);
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(this, "alpha", .3f, 1f);
-        fadeIn.setDuration(500);
+        fadeIn.setDuration(600);
 
-        final AnimatorSet mAnimationSet = new AnimatorSet();
-
+        mAnimationSet.end();
         mAnimationSet.play(fadeIn).after(fadeOut);
 
         mAnimationSet.addListener(new AnimatorListenerAdapter() {
@@ -105,28 +93,11 @@ public class DrawingPointView extends View {
 
     }
 
-    //is called by animtor object
-    public void setPhase(float phase)
-    {
-        //Log.d("pathview","setPhase called with:" + String.valueOf(phase));
-        paint.setPathEffect(createPathEffect(length, phase, 0.0f));
-        invalidate();//will calll onDraw
-
-    }
-
-    private PathEffect createPathEffect(float pathLength, float phase, float offset)
-    {
-        return new DashPathEffect(new float[] {
-                pathLength, pathLength
-        },
-                Math.max(phase * pathLength, offset));
-    }
-
     @Override
     public void onDraw(Canvas c)
     {
         super.onDraw(c);
         c.drawPath(path, paint);
-        c.drawCircle(coordx.get(0), coordy.get(0), 50, paint3);
+        c.drawCircle(coordx.get(0), coordy.get(0), 50, paint2);
     }
 }

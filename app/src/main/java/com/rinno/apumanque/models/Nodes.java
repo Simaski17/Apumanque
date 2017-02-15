@@ -13,9 +13,13 @@ public class Nodes {
     private int locationZ;
     private String type;
 
-
     public Nodes(){
 
+    }
+
+    public Nodes(float locationX, float locationY){
+        this.locationX = (int) locationX;
+        this.locationY = (int) locationY;
     }
 
     public Nodes(String floor, String id, int locationX, int locationY, int locationZ, String type){

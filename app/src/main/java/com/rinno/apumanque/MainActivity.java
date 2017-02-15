@@ -2,8 +2,7 @@ package com.rinno.apumanque;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,8 +20,6 @@ import com.rinno.apumanque.models.Edges;
 import com.rinno.apumanque.models.Nodes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,11 +50,12 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList arregloIdRuta = new ArrayList();
     private ArrayList arregloLocationX = new ArrayList();
     private ArrayList arregloLocationY = new ArrayList();
-    private ArrayList arregloLocationZ = new ArrayList();
+    private ArrayList arregloStair = new ArrayList();
+    private ArrayList arregloType = new ArrayList();
     private ArrayList arregloRutaFinal = new ArrayList();
+
     private List<String> stockList = new ArrayList<String>();
-    private String joined;
-    private String noComa;
+    List<Nodes> puntos = new ArrayList<Nodes>();
     private int start;
     private int end;
 
@@ -88,9 +86,10 @@ public class MainActivity extends AppCompatActivity {
                     Nodes nod = dataSnapshot.child("Nodes").child(String.valueOf(i)).getValue(Nodes.class);
                     Graph.Vertex<String> a = new Graph.Vertex<String>(nod.getId().trim());
                     arregloIdRuta.add(nod.getId());
-                    arregloLocationX.add(String.valueOf(nod.getLocationX()));
-                    arregloLocationY.add(String.valueOf(nod.getLocationY()));
-                    arregloLocationZ.add(String.valueOf(nod.getLocationZ()));
+                    arregloLocationX.add(Float.parseFloat(String.valueOf(nod.getLocationX())));
+                    arregloLocationY.add(Float.parseFloat(String.valueOf(nod.getLocationY())));
+                    //arregloLocationZ.add(Float.parseFloat(String.valueOf(nod.getLocationZ())));
+                    arregloType.add(String.valueOf(nod.getType()));
                     vertices.add(a);
                 }
 
@@ -124,11 +123,21 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.btIr)
     public void onClick() {
+        drawView.setVisibility(View.GONE);
+        drawViewPoint.setVisibility(View.GONE);
 
         start = Integer.parseInt(etInicio.getText().toString());
         end = Integer.parseInt(etFin.getText().toString());
         calcularRuta(start,end);
 
+        if(puntos.size() > 0){
+            drawView.setVisibility(View.VISIBLE);
+            drawViewPoint.setVisibility(View.VISIBLE);
+            //Log.e("TAG","RUTA FINAL: "+arregloRutaFinal);
+
+            drawView.init(puntos, arregloRutaFinal, arregloStair);
+            drawViewPoint.init(puntos);
+        }
     }
 
     public void calcularRuta(int a ,int b){
@@ -141,25 +150,45 @@ public class MainActivity extends AppCompatActivity {
 
         Graph<String> graph = new Graph<String>(Graph.TYPE.UNDIRECTED, vertices, edges);
         Astar astar=new Astar();
+        arregloRutaFinal = new ArrayList();
+        arregloRutaFinal.clear();
+        arregloStair = new ArrayList();
+        arregloStair.clear();
 
         //////GENERAR RUTA FINAL//////////////////////////////
         stockList = astar.aStar(graph, vertices.get(a), vertices.get(b));
-        joined = TextUtils.join(",", stockList);
-        noComa = joined.toString().replace(",","");
-        String[] parts = noComa.split("(?!^)");
-        Collections.addAll(arregloRutaFinal, parts);
-        Log.e("TAG","Arreglo antes de ordenar"+arregloRutaFinal);
+        String ss = "";
+        for(int i =0; i < stockList.size(); i++){
+            ss = String.valueOf(stockList.get(i));
+            String[] sp = ss.split(",");
+            arregloRutaFinal.add(sp[0]);
+            arregloRutaFinal.add(sp[1]);
+
+        }
+        //Log.e("TAG","INICIO "+arregloRutaFinal);
         linkedHashSet.addAll(arregloRutaFinal);
         arregloRutaFinal.clear();
         arregloRutaFinal.addAll(linkedHashSet);
         ///////////////////////////////////////////////////////////////////
-        Log.e("TAG","Arreglo Final: " + Arrays.toString(parts));
-        Log.e("TAG","Ruta Final: " + arregloRutaFinal);
+
+        puntos = new ArrayList<>();
+        for(int i = 0; i < arregloRutaFinal.size(); i++){
+            for (int j = 0; j < arregloIdRuta.size(); j++){
+                if(arregloRutaFinal.get(i).equals(arregloIdRuta.get(j))){
+                    if(arregloType.get(j).equals("stair")){
+                        //Log.e("TAG","ENCONTRADO EN: "+i);
+                        arregloStair.add(i);
+                    }
+                    puntos.add(new Nodes((float) arregloLocationX.get(j),(float) arregloLocationY.get(j)));
+                }
+
+            }
+        }
+        //Log.e("TAG","Arreglo Escaleras: "+arregloStair);
 
         etInicio.setText("");
         etFin.setText("");
-        arregloRutaFinal = new ArrayList();
-        arregloRutaFinal.clear();
+
     }
 
 

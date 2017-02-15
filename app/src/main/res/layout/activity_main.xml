@@ -54,16 +54,18 @@
             android:layout_weight="0.5" />
     </LinearLayout>
 
-    <!--<com.rinno.apumanque.canvas.DrawingPointView-->
-        <!--android:id="@+id/drawingPoint"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_weight="1" />-->
+    <com.rinno.apumanque.canvas.DrawingPointView
+        android:id="@+id/drawingPoint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:visibility="gone"/>
 
-    <!--<com.rinno.apumanque.canvas.DrawingView-->
-        <!--android:id="@+id/drawing"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_weight="1" />-->
+    <com.rinno.apumanque.canvas.DrawingView
+        android:id="@+id/drawing"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:visibility="gone"/>
 
 </RelativeLayout>

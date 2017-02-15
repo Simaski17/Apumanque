@@ -1,5 +1,6 @@
 package com.rinno.apumanque.canvas;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -12,8 +13,12 @@ import android.graphics.PathMeasure;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
+import com.rinno.apumanque.models.Nodes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by simaski on 31-01-17.
@@ -26,7 +31,6 @@ public class DrawingView extends View {
     float length;
     ObjectAnimator animator;
 
-    public String[] parts;
     public ArrayList<Float> coordx = new ArrayList<Float>();
     public ArrayList<Float> coordy = new ArrayList<Float>();
     public ArrayList<Float> coordz = new ArrayList<Float>();
@@ -34,6 +38,7 @@ public class DrawingView extends View {
     ArrayList arreglosegmentado = new ArrayList();
     ArrayList arreglorecorrido = new ArrayList();
     int cont;
+    boolean bandera = true;
 
 
     public DrawingView(Context context)
@@ -51,32 +56,15 @@ public class DrawingView extends View {
         super(context, attrs, defStyleAttr);
     }
 
-    class Puntos{
-        float x, y, z;
-        Puntos(float _x, float _y, float _z){
-            x = _x;
-            y = _y;
-            z = _z;
-        }
-    }
 
-    /*Puntos[] myPath = { new Puntos(300, 100, 0), new Puntos(400, 200, 0), new Puntos(500, 100, 0), new Puntos(250, 350, 0), new Puntos(700, 200, 1), new Puntos(700, 100, 0),
-            new Puntos(550, 350, 0), new Puntos(200, 200, 0)};*/
-
-    Puntos[] myPath = { new Puntos(540, 100, 0), new Puntos(440, 200, 0), new Puntos(500, 300, 0), new Puntos(300, 400, 0), new Puntos(470, 450, 0), new Puntos(550, 450, 0),
-            new Puntos(380, 500, 0), new Puntos(500, 530, 1),new Puntos(750, 550, 0),new Puntos(200, 650, 0),new Puntos(480, 680, 0),new Puntos(540, 650, 0),new Puntos(650, 650, 0),
-            new Puntos(850, 680, 0), new Puntos(250, 720, 0),new Puntos(400, 700, 1),new Puntos(540, 720, 0),new Puntos(150, 830, 0),new Puntos(360, 800, 0),new Puntos(600, 870, 0),
-            new Puntos(900, 800, 0), new Puntos(50, 930, 0),new Puntos(360, 980, 0),new Puntos(480, 950, 0), new Puntos(750, 940, 0),new Puntos(650, 1100, 0)};
-
-
-    public void init(String partes)
+    public void init(List<Nodes> puntos,  ArrayList arregloRuta, ArrayList arregloStair)
     {
+        arreglosegmentado.clear();
+        coordx = new ArrayList<>();
+        coordy = new ArrayList<>();
 
-        //myPath = new float[][]{{300,100,0},{400, 200, 0},{500, 100, 0},{250, 350, 0},{700, 200, 1},{700, 100, 0},{550, 350, 0},{200, 200, 0}};
         animator = ObjectAnimator.ofFloat(this, "phase", 1.0f, 0.0f);
-        animator.setDuration(4000);
-
-        parts =partes.split("->"); // escape .
+        animator.setDuration(5000);
 
         paint = new Paint();
         paint.setColor(Color.BLUE);
@@ -88,31 +76,58 @@ public class DrawingView extends View {
 
         path = new Path();
 
+        for(int i =0; i < puntos.size(); i++){
+            coordx.add((float) puntos.get(i).getLocationX());
+            coordy.add((float) puntos.get(i).getLocationY());
+        }
+
+        segmentarRuta(arregloRuta,arregloStair);
 
 
-        for(int i =0; i < parts.length; i++){
-            Log.e("TAG","RECIBIDO: "+parts[i]);
-            coordx.add(myPath[Integer.parseInt(parts[i])].x);
-            coordy.add(myPath[Integer.parseInt(parts[i])].y);
-            coordz.add(myPath[Integer.parseInt(parts[i])].z);
-            arreglotemporal.add(parts[i]);
-            if(coordz.get(i) == 1.0 || i == parts.length-1){
-                arreglosegmentado.add(arreglotemporal);
-                arreglotemporal = new ArrayList();
+//        for(int i =0; i < arregloRuta.size(); i++){
+//            int j  = 0;
+//            //Log.e("TAG", "RECIBIDO: " + arregloRuta.get(i));
+//            arreglotemporal.add(arregloRuta.get(i));
+//            if(j <= arregloStair.size()) {
+//                if (i == (int) arregloStair.get(j) || i == arregloRuta.size() - 1) {
+//                    arreglosegmentado.add(arreglotemporal);
+//                    arreglotemporal = new ArrayList();
+//                }
+//            }
+//            j++;
+//        }
+
+        Log.e("TAG","ArregloTemporal: "+arreglosegmentado);
+
+
+        for (int i = 0; i < arregloRuta.size(); i++){
+            for(int j = 0; j < arreglosegmentado.size(); j++){
+               arreglorecorrido = (ArrayList) arreglosegmentado.get(j);
+                if(bandera) {
+                    path.moveTo(coordx.get(0), coordy.get(0));
+                    for (int k = 1; k < arreglorecorrido.size(); k++) {
+                        path.lineTo(coordx.get(k), coordy.get(k));
+                        cont = k;
+                    }
+                }else{
+                    path.moveTo(coordx.get(cont), coordy.get(cont));
+                    for (int k = cont+1; k < arreglorecorrido.size(); k++) {
+                        path.lineTo(coordx.get(k), coordy.get(k));
+                        cont = k;
+                    }
+                }
             }
-        }
-
-        Log.e("TAG","ARREGLO SEGMENTADO: "+cont);
-
-
-
-
-        path.moveTo(coordx.get(0), coordy.get(0));
-
-        for (int i = 1; i < coordx.size(); i++){
-            path.lineTo(coordx.get(i), coordy.get(i));
 
         }
+
+        Log.e("TAG","K: "+cont);
+
+//        path.moveTo(coordx.get(0), coordy.get(0));
+//
+//        for (int i = 1; i < coordx.size(); i++){
+//            path.lineTo(coordx.get(i), coordy.get(i));
+//
+//        }
 
         // Measure the path
         PathMeasure measure = new PathMeasure(path, false);
@@ -121,6 +136,33 @@ public class DrawingView extends View {
         float[] intervals = new float[]{length, length};
 
         animator.start();
+
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Toast.makeText(getContext(), "Final", Toast.LENGTH_SHORT).show();
+//                String idGrupo = "correcto";
+//                EventBus.getDefault().postSticky(new Message(idGrupo));
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+
+
 
     }
 
@@ -147,6 +189,22 @@ public class DrawingView extends View {
         super.onDraw(c);
         c.drawPath(path, paint);
         c.drawCircle(coordx.get(0), coordy.get(0), 30, paint2);
+    }
+
+    public void segmentarRuta(ArrayList arregloRuta, ArrayList arregloStair)
+    {
+        for(int i =0; i < arregloRuta.size(); i++){
+            int j  = 0;
+            //Log.e("TAG", "RECIBIDO: " + arregloRuta.get(i));
+            arreglotemporal.add(arregloRuta.get(i));
+            if(j <= arregloStair.size()) {
+                if (i == (int) arregloStair.get(j) || i == arregloRuta.size() - 1) {
+                    arreglosegmentado.add(arreglotemporal);
+                    arreglotemporal = new ArrayList();
+                }
+            }
+            j++;
+        }
     }
 
 }
