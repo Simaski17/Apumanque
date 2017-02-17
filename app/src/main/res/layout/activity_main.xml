@@ -1,71 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rinno.apumanque.MainActivity">
 
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:weightSum="5"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true">
-
-        <TextView
-            android:text="Inicio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvInicio"
-            android:layout_marginLeft="25dp"
-            android:layout_weight="0.5"/>
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="3"
-            android:id="@+id/etInicio"
-            android:layout_weight="1" />
-
-        <TextView
-            android:text="Fin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvFin"
-            android:layout_weight="0.5" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="3"
-            android:id="@+id/etFin"
-            android:layout_weight="1" />
-
-        <Button
-            android:text="Ir..."
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btIr"
-            android:layout_weight="0.5" />
-    </LinearLayout>
-
-    <com.rinno.apumanque.canvas.DrawingPointView
-        android:id="@+id/drawingPoint"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:visibility="gone"/>
-
-    <com.rinno.apumanque.canvas.DrawingView
-        android:id="@+id/drawing"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:visibility="gone"/>
+    <include layout="@layout/header_route"/>
 
 </RelativeLayout>

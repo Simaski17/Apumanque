@@ -15,7 +15,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.rinno.apumanque.models.Message;
 import com.rinno.apumanque.models.Nodes;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +40,7 @@ public class DrawingView extends View {
     ArrayList arreglotemporal = new ArrayList();
     ArrayList arreglosegmentado = new ArrayList();
     ArrayList arreglorecorrido = new ArrayList();
-    int cont;
-    boolean bandera = true;
+    int contador;
 
 
     public DrawingView(Context context)
@@ -57,7 +59,7 @@ public class DrawingView extends View {
     }
 
 
-    public void init(List<Nodes> puntos,  ArrayList arregloRuta, ArrayList arregloStair)
+    public void init(List<Nodes> puntos,  ArrayList arregloRuta, ArrayList arregloStair, int cont)
     {
         arreglosegmentado.clear();
         coordx = new ArrayList<>();
@@ -81,7 +83,16 @@ public class DrawingView extends View {
             coordy.add((float) puntos.get(i).getLocationY());
         }
 
-        segmentarRuta(arregloRuta,arregloStair);
+
+        if(arregloStair.size() > 0) {
+            segmentarRuta(arregloRuta, arregloStair);
+        }else{
+                for(int i =0; i < arregloRuta.size(); i++){
+                    arreglotemporal.add(arregloRuta.get(i));
+                }
+            arreglosegmentado.add(arreglotemporal);
+            arreglotemporal = new ArrayList();
+        }
 
 
 //        for(int i =0; i < arregloRuta.size(); i++){
@@ -98,36 +109,38 @@ public class DrawingView extends View {
 //        }
 
         Log.e("TAG","ArregloTemporal: "+arreglosegmentado);
+        Log.e("TAG","CONTADOR: "+cont);
 
-
-        for (int i = 0; i < arregloRuta.size(); i++){
-            for(int j = 0; j < arreglosegmentado.size(); j++){
-               arreglorecorrido = (ArrayList) arreglosegmentado.get(j);
-                if(bandera) {
-                    path.moveTo(coordx.get(0), coordy.get(0));
-                    for (int k = 1; k < arreglorecorrido.size(); k++) {
-                        path.lineTo(coordx.get(k), coordy.get(k));
-                        cont = k;
-                    }
-                }else{
-                    path.moveTo(coordx.get(cont), coordy.get(cont));
-                    for (int k = cont+1; k < arreglorecorrido.size(); k++) {
-                        path.lineTo(coordx.get(k), coordy.get(k));
-                        cont = k;
-                    }
+        if(cont == 0 && arregloStair.size() == 0) {
+            contador  = cont;
+            for (int i = 0; i < arregloRuta.size(); i++) {
+                arreglorecorrido = (ArrayList) arreglosegmentado.get(0);
+                path.moveTo(coordx.get(cont), coordy.get(cont));
+                for (int k = cont + 1; k < arreglorecorrido.size(); k++) {
+                    path.lineTo(coordx.get(k), coordy.get(k));
                 }
             }
-
+        }else if(cont == 0) {
+            contador  = cont;
+            for (int i = 0; i < arregloRuta.size(); i++) {
+                arreglorecorrido = (ArrayList) arreglosegmentado.get(0);
+                path.moveTo(coordx.get(cont), coordy.get(cont));
+                for (int k = cont + 1; k < arreglorecorrido.size(); k++) {
+                    path.lineTo(coordx.get(k), coordy.get(k));
+                    cont = k;
+                }
+            }
+        }else{
+            contador = cont +1;
+            for (int i = 0; i < arregloRuta.size(); i++) {
+                arreglorecorrido = (ArrayList) arreglosegmentado.get(1);
+                path.moveTo(coordx.get(cont+1), coordy.get(cont+1));
+                for (int k = 1; k < arreglorecorrido.size(); k++) {
+                    int suma = cont + k;
+                    path.lineTo(coordx.get(cont+k +1), coordy.get(cont+k+1));
+                }
+            }
         }
-
-        Log.e("TAG","K: "+cont);
-
-//        path.moveTo(coordx.get(0), coordy.get(0));
-//
-//        for (int i = 1; i < coordx.size(); i++){
-//            path.lineTo(coordx.get(i), coordy.get(i));
-//
-//        }
 
         // Measure the path
         PathMeasure measure = new PathMeasure(path, false);
@@ -137,6 +150,7 @@ public class DrawingView extends View {
 
         animator.start();
 
+        final int finalCont = cont;
         animator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -145,9 +159,10 @@ public class DrawingView extends View {
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                Log.e("TAG","POS FINAL X: "+coordx.get(finalCont));
                 Toast.makeText(getContext(), "Final", Toast.LENGTH_SHORT).show();
-//                String idGrupo = "correcto";
-//                EventBus.getDefault().postSticky(new Message(idGrupo));
+                EventBus.getDefault().postSticky(new Message(finalCont));
+
             }
 
             @Override
@@ -160,9 +175,6 @@ public class DrawingView extends View {
 
             }
         });
-
-
-
 
     }
 
@@ -188,14 +200,13 @@ public class DrawingView extends View {
     {
         super.onDraw(c);
         c.drawPath(path, paint);
-        c.drawCircle(coordx.get(0), coordy.get(0), 30, paint2);
+        c.drawCircle(coordx.get(contador), coordy.get(contador), 30, paint2);
     }
 
     public void segmentarRuta(ArrayList arregloRuta, ArrayList arregloStair)
     {
         for(int i =0; i < arregloRuta.size(); i++){
             int j  = 0;
-            //Log.e("TAG", "RECIBIDO: " + arregloRuta.get(i));
             arreglotemporal.add(arregloRuta.get(i));
             if(j <= arregloStair.size()) {
                 if (i == (int) arregloStair.get(j) || i == arregloRuta.size() - 1) {

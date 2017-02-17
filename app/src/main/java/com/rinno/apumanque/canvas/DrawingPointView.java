@@ -27,6 +27,7 @@ public class DrawingPointView extends View {
     Paint paint;
     Paint paint2;
     float length;
+    int contador;
 
     public ArrayList<Float> coordx = new ArrayList<Float>();
     public ArrayList<Float> coordy = new ArrayList<Float>();
@@ -48,7 +49,7 @@ public class DrawingPointView extends View {
     }
 
 
-    public void init(List<Nodes> puntos)
+    public void init(List<Nodes> puntos, int cont)
     {
 
         coordx = new ArrayList<>();
@@ -65,7 +66,13 @@ public class DrawingPointView extends View {
             coordy.add((float) puntos.get(i).getLocationY());
         }
 
-        path.moveTo(coordx.get(0), coordy.get(0));
+        if(cont == 0) {
+            contador  = cont;
+                path.moveTo(coordx.get(cont), coordy.get(cont));
+        }else{
+              contador = cont +1;
+                path.moveTo(coordx.get(cont+1), coordy.get(cont+1));
+        }
 
         PathMeasure measure = new PathMeasure(path, false);
         length = measure.getLength();
@@ -98,6 +105,6 @@ public class DrawingPointView extends View {
     {
         super.onDraw(c);
         c.drawPath(path, paint);
-        c.drawCircle(coordx.get(0), coordy.get(0), 50, paint2);
+        c.drawCircle(coordx.get(contador), coordy.get(contador), 50, paint2);
     }
 }

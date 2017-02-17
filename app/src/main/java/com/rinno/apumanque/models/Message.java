@@ -5,22 +5,20 @@ package com.rinno.apumanque.models;
  */
 
 public class Message {
-    private String idGrupo;
+    private int cont;
     private String idPantalla;
     private String server;
     private String cast;
 
-    public Message(String idGrupo) {
-        this.idGrupo = idGrupo;
+    public Message(int cont) {
+        this.cont = cont;
     }
 
-    public String getIdGrupo() {
-        return idGrupo;
+    public int getCont() {
+        return cont;
     }
 
-    public void setIdGrupo(String idGrupo) {
-        this.idGrupo = idGrupo;
+    public void setCont(int cont) {
+        this.cont = cont;
     }
-
-
 }
